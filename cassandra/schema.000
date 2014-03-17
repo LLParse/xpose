@@ -1,0 +1,54 @@
+//The Idea here is that InventoryByItemizedItem is the fact table and the blobs we are storing for each day is a serialized Thrift schema so we can store object structures.
+
+//c* text to create each table
+
+CREATE TABLE IF NOT EXISTS Chain 
+(chainId uuId,
+chainName text,
+PRIMARY KEY (chainId, chainName)
+WITH caching = 'all';
+
+CREATE TABLE IF NOT EXISTS HotelProperty 
+(propertyId uuId,
+chainId uuId, 
+propertyName text,
+PRIMARY KEY ((propertyId, chainId), propertyName)
+WITH caching = 'all';
+
+
+CREATE TABLE IF NOT EXISTS Account 
+(accountHolderId uuId,
+accountName text, 
+accountId uuId,
+PRIMARY KEY (accountHolderId, accountName)
+WITH caching = 'all';
+
+CREATE TABLE IF NOT EXISTS AccountItemizations 
+(accountId uuId,
+itemizedLabel text,
+itemizedId uuId,
+itemizedDescription text,
+itemizedProperties map<text,text>, 
+PRIMARY KEY (accountId, itemizedLabel)
+WITH caching = 'all';
+
+CREATE TABLE IF NOT EXISTS ItemeizedItems 
+(itemizedId uuId,
+itemId uuId,
+itemName text,
+itemDescription text,
+itemProperties map<text,text>, 
+PRIMARY KEY (itemizedId, itemName)
+WITH caching = 'all';
+
+CREATE TABLE IF NOT EXISTS InventoryByItemizedItem 
+(itemizedId uuId,
+itemId uuId,
+startTime timestamp,
+endTime timestamp,
+byDay map<int,blob>, 
+anyGivenDay blob,
+authorizedCount map<int,int>,
+availableCount map<int,int>,
+bookedCount map<int,int>,
+PRIMARY KEY ((itemizedId,itemId), startTime, endTime));
