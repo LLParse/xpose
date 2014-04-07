@@ -29,14 +29,20 @@ class cassandra(
 
     exec { 'update cassandra yaml' :
       cwd     => '/tmp',
-      command => "cp /vagrant/vagrant/cassandra.yaml /opt/apache/apache-cassandra-2.0.3/conf",
+      command => "cp /vagrant/cassandra/cassandra.yaml /opt/apache/apache-cassandra-${cassandra_version}/conf",
       require => Exec['extract cassandra'],
     }    
 
-        exec { 'start cassandra':
+    exec { 'start cassandra':
         cwd     => '/tmp',
         command => "/opt/apache/apache-cassandra-${cassandra_version}/bin/cassandra",
-        require => Exec['extract cassandra'],
-    }    
+        require => Exec['update cassandra yaml'],
+    }
+
+    exec { 'create xpose schema':
+        cwd     => '/tmp',
+        command => "/opt/apache/apache-cassandra-${cassandra_version}/bin/cqlsh 172.16.51.51 -f /vagrant/cassandra/schema.xpose",
+        require => Exec['start cassandra']
+    }
 }
 

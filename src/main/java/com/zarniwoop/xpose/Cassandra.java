@@ -26,7 +26,7 @@ public class Cassandra {
 	Session session = null;
 
 	public static void main(String[] args) {
-		String host = args.length > 0 ? args[0] : "172.16.50.50";
+		String host = args.length > 0 ? args[0] : "172.16.51.51";
 		String keyspace = args.length > 1 ? args[1] : "xpose";
 		Cassandra inst = new Cassandra();
 		inst.startup(host, keyspace);
