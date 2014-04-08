@@ -1,7 +1,6 @@
-package com.zarniwoop.xpose
+package com.zarniwoop.xpose.actor
 
 import org.xbill.DNS._
-
 import akka.actor.Actor
 import akka.actor.actorRef2Scala
 

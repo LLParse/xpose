@@ -16,6 +16,5 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.2.3",
   "com.twitter" % "finatra" % "1.4.0",
   "log4j" % "log4j" % "1.2.17",
-  "dnsjava" % "dnsjava" % "2.1.6",
-  "org.apache.kafka" % "kafka_2.10" % "0.8.0" intransitive()
+  "dnsjava" % "dnsjava" % "2.1.6"
 )

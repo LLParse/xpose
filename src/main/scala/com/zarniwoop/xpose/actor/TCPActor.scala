@@ -1,21 +1,20 @@
-package com.zarniwoop.xpose
+package com.zarniwoop.xpose.actor
 
 import akka.actor._
 import java.net._
 
-class PortActor extends Actor {
-
-  var connections = 0
-  var refusals = 0
-  var timeouts = 0
+class TCPActor extends Actor {
 
   def receive = {
-    case message: PortMessage => message match {
+    case message: TCPMessage => message match {
       case TCPPortScan(address, port, timeout) => {
         val start = System.currentTimeMillis()
 
         val s = new Socket()
         var response: String = null
+        var connections = 0
+        var refusals = 0
+        var timeouts = 0
         try {
           s.connect(new InetSocketAddress(address, port), timeout)
           response = "Connected"
@@ -23,7 +22,7 @@ class PortActor extends Actor {
         } catch {
           case e: SocketTimeoutException => {
             response = "Timeout"
-            
+
             // if TCP connections have been refused in the past, wait for a while
             // and reschedule this work because we may have hit the limiter
             if (refusals > 0 && timeouts == 0) {
@@ -50,7 +49,7 @@ class PortActor extends Actor {
         if (response == "Connected")
           System.out.println("(%s) %s: %s:%d (%dms)".format(self.path.name, response, address, port, millis))
       }
-      case TCPPortScanBatch(address, startPort, endPort, timeout) => {
+      case TCPPortScanRange(address, startPort, endPort, timeout) => {
         for (port <- startPort to endPort) {
           self ! TCPPortScan(address, port, timeout)
         }
