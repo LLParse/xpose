@@ -26,7 +26,7 @@ class HostScanActor extends Actor {
           // First try scanning port 80 for response time profiling
           implicit val timeout = Timeout(5 seconds)
           var duration = 3000
-          val future = scan ? TCPPortScan(address, 80, duration)
+          val future = scan ? TCPPortSniff(address, 80, duration)
           try {
             duration = Await.result(future, timeout.duration).asInstanceOf[Int] * 2
           } catch {
@@ -36,7 +36,7 @@ class HostScanActor extends Actor {
           // Break up scans into chunk
           val step = 1024
           for (i <- 1 to 65536 by step)
-            scan ! TCPPortScanRange(address, i, i + step - 1, duration)
+            scan ! TCPPortSniffRange(address, i, i + step - 1, duration)
         }
       }
     }

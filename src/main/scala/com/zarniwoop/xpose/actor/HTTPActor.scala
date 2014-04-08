@@ -11,20 +11,21 @@ class HTTPActor extends Actor with TCPStream with Logging {
 
   def receive = {
     case HTTPSniffRequest(host, port, path) => {
-      var isHTTP: Boolean = true
-      socket(host, port)
-      write(getGETRequest(host, path))
-      read() match {
-        case x if x.startsWith("HTTP/1.") => {
-          val code = x.substring(0, x.indexOf("\r\n")).split(" +")(1)
-          val desc = HTTPStatusCodes1_1.codeMap.get(code.toInt)
-          debug("HTTP: (" + code + ") " + desc.getOrElse("Unknown"))
+      if (socket(host, port)) {
+        var isHTTP: Boolean = true
+        write(getGETRequest(host, path))
+        read() match {
+          case x if x.startsWith("HTTP/1.") => {
+            val code = x.substring(0, x.indexOf("\r\n")).split(" +")(1)
+            val desc = HTTPStatusCodes1_1.codeMap.get(code.toInt)
+            debug("HTTP: (" + code + ") " + desc.getOrElse("Unknown"))
+          }
+          case _ => isHTTP = false
         }
-        case _ => isHTTP = false
+        close()
+        if (isHTTP)
+          sender ! HTTPSniffResponse(host, port)
       }
-      close()
-      if (isHTTP)
-        sender ! HTTPSniffResponse(host, port)
     }
   }
 

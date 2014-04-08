@@ -9,8 +9,8 @@ case class IPV4Lookup(hostname: String) extends DNSMessage
 
 // PortActor messages
 sealed trait TCPMessage extends ActorMessage
-case class TCPPortScan(address: String, port: Int, timeout: Int) extends TCPMessage
-case class TCPPortScanRange(address: String, portStart: Int, portEnd: Int, timeout: Int) extends TCPMessage
+case class TCPPortSniff(address: String, port: Int, timeout: Int) extends TCPMessage
+case class TCPPortSniffRange(address: String, portStart: Int, portEnd: Int, timeout: Int) extends TCPMessage
 
 // HostScanActor messages
 sealed trait HostScanMessage extends ActorMessage

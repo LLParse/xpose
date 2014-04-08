@@ -7,7 +7,7 @@ class TCPActor extends Actor {
 
   def receive = {
     case message: TCPMessage => message match {
-      case TCPPortScan(address, port, timeout) => {
+      case TCPPortSniff(address, port, timeout) => {
         val start = System.currentTimeMillis()
 
         val s = new Socket()
@@ -49,9 +49,9 @@ class TCPActor extends Actor {
         if (response == "Connected")
           System.out.println("(%s) %s: %s:%d (%dms)".format(self.path.name, response, address, port, millis))
       }
-      case TCPPortScanRange(address, startPort, endPort, timeout) => {
+      case TCPPortSniffRange(address, startPort, endPort, timeout) => {
         for (port <- startPort to endPort) {
-          self ! TCPPortScan(address, port, timeout)
+          self ! TCPPortSniff(address, port, timeout)
         }
       }
     }
